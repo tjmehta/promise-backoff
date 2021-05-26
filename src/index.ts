@@ -3,8 +3,8 @@ import BaseError from 'baseerr'
 import raceAbort from 'race-abort'
 import timeout from 'abortable-timeout'
 
-class BackoffError extends BaseError<{ attemptNumber: number }> {
-  attemptNumber!: number
+class BackoffError extends BaseError<{ attemptCount: number }> {
+  attemptCount!: number
 }
 
 type Opts = {
@@ -39,14 +39,18 @@ export default async function promiseBackoff<T>(
     asyncIterator = (timeouts as AsyncIterable<number>)[Symbol.asyncIterator]()
   }
 
+  let attemptCount = 0
+
   async function attempt(): Promise<T> {
+    attemptCount++
     let taskResult: Promise<T> | null = null
     let retryCalled = false
 
     return task({
       retry: async (err: Error) => {
         if (taskResult) return taskResult // lost race
-        if (retryCalled) throw new BackoffError('retry already called')
+        if (retryCalled)
+          throw new BackoffError('retry already called', { attemptCount })
         retryCalled = true
 
         // get backoff timeout duration from iterator
