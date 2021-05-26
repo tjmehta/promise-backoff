@@ -7,7 +7,7 @@ class BackoffError extends BaseError<{ attemptCount: number }> {
   attemptCount!: number
 }
 
-type Opts = {
+export type Opts = {
   timeouts: Iterable<number> | AsyncIterable<number>
   minTimeout?: number
   maxTimeout?: number
