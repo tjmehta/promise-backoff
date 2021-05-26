@@ -9,10 +9,10 @@ class BackoffError extends BaseError<{ attemptCount: number }> {
 
 export type Opts = {
   timeouts: Iterable<number> | AsyncIterable<number>
-  minTimeout?: number
-  maxTimeout?: number
-  jitter?: (duration: number) => number
-  signal?: AbortSignal
+  minTimeout?: number | null | undefined
+  maxTimeout?: number | null | undefined
+  jitter?: ((duration: number) => number) | null | undefined
+  signal?: AbortSignal | null | undefined
 }
 
 type TaskOpts<T> = {
