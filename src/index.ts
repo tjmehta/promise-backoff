@@ -3,8 +3,8 @@ import BaseError from 'baseerr'
 import raceAbort from 'race-abort'
 import timeout from 'abortable-timeout'
 
-class BackoffError extends BaseError<{ attemptCount: number }> {
-  attemptCount!: number
+class RetryableError extends BaseError<{ originalError: Error }> {
+  originalError!: number
 }
 
 export type Opts = {
@@ -39,20 +39,16 @@ export default async function promiseBackoff<T>(
     asyncIterator = (timeouts as AsyncIterable<number>)[Symbol.asyncIterator]()
   }
 
-  let attemptCount = 0
-
   async function attempt(): Promise<T> {
-    attemptCount++
-    let taskResult: Promise<T> | null = null
-    let retryCalled = false
-
-    return task({
-      retry: async (err: Error) => {
-        if (taskResult) return taskResult // lost race
-        if (retryCalled)
-          throw new BackoffError('retry already called', { attemptCount })
-        retryCalled = true
-
+    try {
+      return await task({
+        retry: (err: Error) => {
+          throw new RetryableError('retryable', { originalError: err })
+        },
+        signal,
+      })
+    } catch (err) {
+      if (err instanceof RetryableError) {
         // get backoff timeout duration from iterator
         let result: IteratorResult<number> = { done: true, value: null }
         if (iterator) result = iterator.next()
@@ -62,8 +58,7 @@ export default async function promiseBackoff<T>(
 
         // no more retries
         if (result.done) {
-          retryCalled = false
-          throw err
+          throw err.originalError
         }
 
         // calculate backoff timeout duration
@@ -77,20 +72,9 @@ export default async function promiseBackoff<T>(
 
         // attempt to retry task
         return await raceAbort(signal, attempt())
-      },
-      signal,
-    }).then(
-      (val) => {
-        if (retryCalled || taskResult) return val // lost race
-        taskResult = Promise.resolve(val)
-        return val
-      },
-      (err) => {
-        if (retryCalled || taskResult) throw err // lost race
-        taskResult = Promise.reject(err)
-        throw err
-      },
-    )
+      }
+      throw err
+    }
   }
   // todo
   return raceAbort(signal, attempt())

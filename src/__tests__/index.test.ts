@@ -1,4 +1,3 @@
-import { AbortSignal } from 'fast-abort-controller'
 import promiseBackoff from '../index'
 import timeout from 'abortable-timeout'
 
@@ -28,8 +27,8 @@ describe('promiseBackoff', () => {
   it('should backoff until failure', async () => {
     const err = new Error('boom')
     const taskDuration = 100
-    const task = jest.fn(async function ({ retry }) {
-      await timeout(taskDuration, new AbortSignal())
+    const task = jest.fn(async function ({ retry, signal }) {
+      await timeout(taskDuration, signal)
       return retry(err)
     })
     const timeouts = [10, 20, 30]
@@ -51,6 +50,7 @@ describe('promiseBackoff', () => {
 
 async function runTimersToTime(duration: number) {
   jest.runTimersToTime(duration)
+  await Promise.resolve()
   await Promise.resolve()
   await Promise.resolve()
   await Promise.resolve()
