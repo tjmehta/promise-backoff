@@ -1,5 +1,5 @@
 import BaseError from 'baseerr'
-import { FastAbortSignal } from 'fast-abort-controller'
+import FastAbortController from 'fast-abort-controller'
 import raceAbort from 'race-abort'
 import timeout from 'abortable-timeout'
 
@@ -27,7 +27,7 @@ export default async function promiseBackoff<T>(
   const timeouts = opts.timeouts
   const minTimeout = opts.minTimeout ?? 0
   const maxTimeout = opts.maxTimeout ?? Infinity
-  const signal = opts.signal ?? new FastAbortSignal() // unaborted signal
+  const signal = opts.signal ?? new FastAbortController().signal // unaborted signal
   const jitter = opts.jitter ?? fullJitter
 
   let iterator: Iterator<number> | null = null
