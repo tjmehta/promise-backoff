@@ -1,5 +1,5 @@
 import BaseError from 'baseerr'
-import { AbortSignal as FastAbortSignal } from 'fast-abort-controller'
+import { FastAbortSignal } from 'fast-abort-controller'
 import raceAbort from 'race-abort'
 import timeout from 'abortable-timeout'
 
