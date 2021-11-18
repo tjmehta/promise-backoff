@@ -22,7 +22,7 @@ const backoff = require('promise-backoff')
 #### Example
 
 ```js
-import backoff from 'promise-backoff`
+import backoff from 'promise-backoff'
 
 const opts = {
   // required
