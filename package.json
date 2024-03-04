@@ -41,10 +41,10 @@
     "typescript": "^3.9.3"
   },
   "dependencies": {
-    "abortable-timeout": "^1.0.0",
-    "baseerr": "^1.0.1",
-    "fast-abort-controller": "^2.1.1",
-    "is-generator-fn": "^2.1.0",
-    "race-abort": "^2.0.0"
+    "abortable-timeout": "^3.0.1",
+    "baseerr": "^2.0.1",
+    "fast-abort-controller": "^4.0.0",
+    "is-generator-fn": "^3.0.0",
+    "race-abort": "^3.0.1"
   }
 }
