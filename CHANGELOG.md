@@ -1,3 +1,7 @@
+# v2.0.1
+
+patch: build dir file extension fixes
+
 # v2.0.0
 
 - major: fix cjs and esm support
