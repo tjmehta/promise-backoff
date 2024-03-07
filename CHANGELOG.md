@@ -1,5 +1,9 @@
 # v2.0.1
 
+patch: fix test jest configgst
+
+# v2.0.1
+
 patch: build dir file extension fixes
 
 # v2.0.0
