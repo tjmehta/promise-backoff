@@ -1,6 +1,6 @@
 # v2.0.1
 
-patch: fix test jest configgst
+patch: fix test jest config
 
 # v2.0.1
 
